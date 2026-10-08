@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bubble Sort Animado</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #111827;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #9ca3af;
+        }
+
+        #vetor {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+
+            height: 200px;
+            margin-top: 30px;
+        }
+
+        .numero {
+            width: 65px;
+            height: 65px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #3b82f6;
+            border-radius: 10px;
+
+            font-size: 24px;
+            font-weight: bold;
+
+            transition:
+                transform 0.4s ease,
+                background-color 0.3s ease;
+        }
+
+        /* Números sendo comparados */
+        .comparando {
+            background: #f59e0b;
+            transform: translateY(-25px);
+        }
+
+        /* Números que serão trocados */
+        .trocando {
+            background: #ef4444;
+            transform: translateY(-45px);
+        }
+
+        /* Número já organizado */
+        .certo {
+            background: #22c55e;
+        }
+
+        button {
+            margin-top: 30px;
+
+            padding: 12px 25px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #22c55e;
+            color: white;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Bubble Sort Animado</h1>
+
+    <p>
+        Observe os números sendo comparados e trocados.
+    </p>
+
+    <div id="vetor"></div>
+
+    <button id="botao" onclick="ordenar()">
+        Ordenar
+    </button>
+
+    <div id="status">
+        Clique em "Ordenar" para começar.
+    </div>
+
+
+    <script>
+
+        // Vetor inicial
+        let numeros = [5, 2, 8, 1, 3];
+
+        const container = document.getElementById("vetor");
+        const botao = document.getElementById("botao");
+        const status = document.getElementById("status");
+
+
+        // Mostra o vetor na tela
+        function mostrarVetor() {
+
+            container.innerHTML = "";
+
+            numeros.forEach((numero) => {
+
+                const elemento = document.createElement("div");
+
+                elemento.classList.add("numero");
+
+                elemento.textContent = numero;
+
+                container.appendChild(elemento);
+            });
+        }
+
+
+        // Função para esperar alguns milissegundos
+        function esperar(tempo) {
+
+            return new Promise(resolve => {
+                setTimeout(resolve, tempo);
+            });
+        }
+
+
+        // Algoritmo Bubble Sort
+        async function ordenar() {
+
+            botao.disabled = true;
+
+            status.textContent = "Ordenando...";
+
+            const elementos = container.children;
+
+
+            // Percorre o vetor
+            for (let i = 0; i < numeros.length - 1; i++) {
+
+                // Compara os números vizinhos
+                for (
+                    let j = 0;
+                    j < numeros.length - 1 - i;
+                    j++
+                ) {
+
+                    status.textContent =
+                        `Comparando ${numeros[j]} e ${numeros[j + 1]}`;
+
+
+                    // Destaca os dois números
+                    elementos[j].classList.add("comparando");
+                    elementos[j + 1].classList.add("comparando");
+
+                    await esperar(700);
+
+
+                    // Se o número da esquerda for maior
+                    if (numeros[j] > numeros[j + 1]) {
+
+                        status.textContent =
+                            `Trocando ${numeros[j]} e ${numeros[j + 1]}`;
+
+
+                        // Muda a cor
+                        elementos[j].classList.remove("comparando");
+                        elementos[j + 1].classList.remove("comparando");
+
+                        elementos[j].classList.add("trocando");
+                        elementos[j + 1].classList.add("trocando");
+
+
+                        await esperar(500);
+
+
+                        // Faz a troca
+                        let temp = numeros[j];
+
+                        numeros[j] = numeros[j + 1];
+
+                        numeros[j + 1] = temp;
+
+
+                        // Atualiza os números na tela
+                        mostrarVetor();
+
+
+                        await esperar(500);
+
+                    } else {
+
+                        // Remove o destaque
+                        elementos[j].classList.remove("comparando");
+
+                        elementos[j + 1].classList.remove("comparando");
+
+                        await esperar(250);
+                    }
+                }
+
+                // O maior número daquela passagem
+                // já está na posição correta
+                const ultimo = container.children[
+                    numeros.length - 1 - i
+                ];
+
+                ultimo.classList.add("certo");
+            }
+
+
+            // Marca o primeiro número como correto
+            container.children[0].classList.add("certo");
+
+
+            status.textContent =
+                "Ordenação concluída!";
+
+
+            botao.disabled = false;
+        }
+
+
+        // Mostra o vetor inicialmente
+        mostrarVetor();
+
+    </script>
+
+</body>
+</html>
